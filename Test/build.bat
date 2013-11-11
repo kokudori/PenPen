@@ -1,0 +1,1 @@
+..\PenPen\bin\Release\PenPen.exe Fixtures\calculator.pen -o=Parsers\Calculator.cs -n=Calculator

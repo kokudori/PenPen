@@ -1,0 +1,132 @@
+﻿start: grammar
+
+grammar :: Grammar
+	= ___ prolog:prolog line epilog:epilog ___ {
+		return new Grammar(prolog, epilog);
+	}
+prolog :: IEnumerable<Config>
+	= head:config tail:(line !symbol config)* {
+		return new[] { head }.Concat(tail.Select(x => x.Item2));
+	}
+epilog :: IEnumerable<Symbol>
+	= head:symbol tail:(line symbol)+ {
+		return new[] { head }.Concat(tail.Select(x => x.Item2))
+			.SelectMany(x => x as IEnumerable<Symbol>);
+	} / symbol
+
+config :: Config
+	= name:name __* ':' __* value:[^\r\n\t]+ {
+		return new Config(name, value);
+	}
+symbol :: IEnumerable<Symbol>
+	= name:name type:type? display:display? _ '=' _ choice:choice {
+		var _type = type.Get("string");
+		var _display = display.Get(name);
+		if (choice is Choice)
+			return (choice as Choice).Expressions.Select(x => new Symbol(name, _type, _display, x));
+		return new[] { new Symbol(name, _type, _display, choice) };
+	}
+
+type :: string
+	= __* "::" __* name:[^\r\n \t]+ {
+		return name;
+	}
+display :: string
+	= __ text:string {
+		return text.Value;
+	}
+label :: string
+	= name:name _* ':' _* {
+		return name;
+	}
+
+choice :: BaseExpression
+	= head:with_action tail:(_ '/' _ with_action)+ {
+		return new Choice(new[] { head }.Concat(tail.Select(x => x.Item4)));
+	} / with_action
+with_action :: BaseExpression
+	= sequence:sequence action:(_ action) {
+		sequence.Action = action.Item2;
+		return sequence;
+	} / sequence
+sequence :: BaseExpression
+	= head:assertion tail:(_ !symbol assertion)+ {
+		return new Sequence(new[] { head }.Concat(tail.Select(x => x.Item2)));
+	} / assertion
+
+assertion :: BaseExpression
+	= assert:('&' / '!') repetition:repetition {
+		return new Assertion(assert == '&', repetition);
+	} / label:label repetition:repetition {
+		return new Labeled(label, repetition);
+	} / repetition
+repetition :: BaseExpression
+	= primitive:primitive quantifier:('*' / '+') {
+		var min = quantifier == '*' ? 0 : 1;
+		return new Repetition(primitive, min, null);
+	} / primitive:primitive '?' {
+		return new Optional(primitive);
+	} / primitive
+
+action :: SemanticAction
+	= '{' code:code+ '}' {
+		return new SemanticAction("{" + string.Join("", code) + "}");
+	}
+code :: string
+	= action:action {
+		return action.Code;
+	} / !'{' !'}' code:. {
+		return code.ToString();
+	}
+
+primitive :: BaseExpression
+	= char / string / range
+	/ any / rule / expression
+
+char :: Literal
+	= "'" content:(escape / [^']) "'" {
+		return new Literal(content, true);
+	}
+string :: Literal
+	= '"' content:("\\\"" / "\x5c\x5c" / [^"])+ '"' {
+		return new Literal(string.Join("", content), false);
+	}
+escape
+	= '\\' ('n' / 'r' / 't' / '\'' / '"' / '\\' / '0' / 'a' / 'b' / 'f')
+
+any :: Range
+	= '.' {
+		return new Range("\x0001-\xFFFF");
+	}
+range :: Range
+	= '[' content:("\\]" / "\\\\" / [^\]])+ ']' {
+		return new Range(string.Join("", content));
+	}
+expression :: Expression
+	= '(' _* choice:choice _* ')' {
+		return new Expression(choice);
+	}
+
+name :: string
+	= head:[a-zA-Z_] tail:[a-zA-Z0-9_]* {
+		return head + tail;
+	}
+rule :: Rule
+	= name:name {
+		return new Rule(name);
+	}
+
+space
+	= [ \t]
+newline
+	= "\r\n" / "\r" / "\n"
+comment
+	= '#' [^\r\n]* newline
+_
+	= (space / newline)+ comment? (space / newline)*
+__
+	= space+
+line
+	= newline+ comment? (space / newline)*
+___
+	= (space / newline)* comment? (space / newline)*

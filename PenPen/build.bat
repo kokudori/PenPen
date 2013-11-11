@@ -1,0 +1,1 @@
+bin\Release\PenPen.exe parser.pen -o=Parser.cs
