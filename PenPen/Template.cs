@@ -185,6 +185,76 @@ using PenPen.Expressions;
 			return result;
 		}
 
+		State Sequence<T1, T2, T3, T4, T5, T6, T7, T8>(State state, Stack<Result> results, bool inner, params ParseFunc[] parses)
+		{
+			var result = Sequence(state, results, parses);
+			if (!result.parsed)
+				return new State(input, false, state.index, 0);
+			if (inner)
+			{
+				var types = string.Format("Tuple<{{0}}, {{1}}, {{2}}, {{3}}, {{4}}, {{5}}, {{6}}, {{7}}>", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5), typeof(T6).Name, typeof(T7), typeof(T8));
+				var value = new Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8>>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, new Tuple<T8>(results.Pop().value));
+				results.Push(new Result(null, types, value));
+			}
+			return result;
+		}
+
+		State Sequence<T1, T2, T3, T4, T5, T6, T7, T8, T9>(State state, Stack<Result> results, bool inner, params ParseFunc[] parses)
+		{
+			var result = Sequence(state, results, parses);
+			if (!result.parsed)
+				return new State(input, false, state.index, 0);
+			if (inner)
+			{
+				var types = string.Format("Tuple<{{0}}, {{1}}, {{2}}, {{3}}, {{4}}, {{5}}, {{6}}, {{7}}, {{8}}>", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5), typeof(T6).Name, typeof(T7), typeof(T8), typeof(T9));
+				var value = new Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8, T9>>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, new Tuple<T8, T9>(results.Pop().value, results.Pop().value));
+				results.Push(new Result(null, types, value));
+			}
+			return result;
+		}
+
+		State Sequence<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(State state, Stack<Result> results, bool inner, params ParseFunc[] parses)
+		{
+			var result = Sequence(state, results, parses);
+			if (!result.parsed)
+				return new State(input, false, state.index, 0);
+			if (inner)
+			{
+				var types = string.Format("Tuple<{{0}}, {{1}}, {{2}}, {{3}}, {{4}}, {{5}}, {{6}}, {{7}}, {{8}}, {{9}}>", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5), typeof(T6).Name, typeof(T7), typeof(T8), typeof(T9), typeof(T10));
+				var value = new Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8, T9, T10>>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, new Tuple<T8, T9, T10>(results.Pop().value, results.Pop().value, results.Pop().value));
+				results.Push(new Result(null, types, value));
+			}
+			return result;
+		}
+
+		State Sequence<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(State state, Stack<Result> results, bool inner, params ParseFunc[] parses)
+		{
+			var result = Sequence(state, results, parses);
+			if (!result.parsed)
+				return new State(input, false, state.index, 0);
+			if (inner)
+			{
+				var types = string.Format("Tuple<{{0}}, {{1}}, {{2}}, {{3}}, {{4}}, {{5}}, {{6}}, {{7}}, {{8}}, {{9}}, {{10}}>", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5), typeof(T6).Name, typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11));
+				var value = new Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8, T9, T10, T11>>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, new Tuple<T8, T9, T10, T11>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value));
+				results.Push(new Result(null, types, value));
+			}
+			return result;
+		}
+
+		State Sequence<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(State state, Stack<Result> results, bool inner, params ParseFunc[] parses)
+		{
+			var result = Sequence(state, results, parses);
+			if (!result.parsed)
+				return new State(input, false, state.index, 0);
+			if (inner)
+			{
+				var types = string.Format("Tuple<{{0}}, {{1}}, {{2}}, {{3}}, {{4}}, {{5}}, {{6}}, {{7}}, {{8}}, {{9}}, {{10}}, {{11}}>", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5), typeof(T6).Name, typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12));
+				var value = new Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8, T9, T10, T11, T12>>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, new Tuple<T8, T9, T10, T11, T12>(results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value, results.Pop().value));
+				results.Push(new Result(null, types, value));
+			}
+			return result;
+		}
+
 		State Literal(State state, Stack<Result> results, string type, string literal)
 		{
 			if (literal.Length > input.Skip(state.index).Count())
