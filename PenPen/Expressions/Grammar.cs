@@ -130,7 +130,8 @@ namespace PenPen.Expressions
 			this.input = input + ""\0"";
 			var results = new Stack<Result>();
 			cache = new Dictionary<CacheKey, CacheValue>();
-			var parsed = Rule(new State(input, true, 0, 0), results, ""{1}"").parsed;
+			var result = Rule(new State(input, true, 0, 0), results, ""{1}"");
+			var parsed = result.parsed && result.index == this.input.Length - 1;
 			value = parsed ? results.Pop().value : default({0});
 			return parsed;
 		}}
