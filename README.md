@@ -1,6 +1,6 @@
-# PenPen - the type safe PEG parser
+# PenPen - the type safe C# PEG parser generator
 PEG(Parsing Expression Grammar) is simple and expressive.  
-but, it is a disadvantage that it takes time to it terribly.  
+but, it is a disadvantage that it takes time too.  
 PenPen was eliminated this disadvantage by supporting a memoization(i.e. a packrat parser).  
 
 PenPen is forked by peg-sharp  

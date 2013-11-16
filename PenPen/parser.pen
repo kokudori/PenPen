@@ -127,6 +127,6 @@ _
 __
 	= space+
 line
-	= newline+ comment? (space / newline)*
+	= space* (comment / newline)+ (space / newline)*
 ___
 	= (space / newline)* comment? (space / newline)*
